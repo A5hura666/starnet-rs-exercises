@@ -2,7 +2,9 @@ use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::net::{Shutdown, TcpStream};
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
+
 use crate::app_defines::AppDefines;
+use crate::serveur::server_thread::ServerSettings;
 use crate::types::{add_message, MessageType, StyledMessage};
 
 /// A struct representing a client handler, responsible for communicating with a client via a TCP socket.
@@ -17,6 +19,8 @@ pub(crate) struct ClientHandler {
     pub(crate) previous_time: u64,
     /// A thread-safe, shared vector of styled messages.
     pub(crate) messages: Arc<Mutex<Vec<StyledMessage>>>,
+    /// Thread-safe, shared server settings.
+    pub(crate) settings: Arc<Mutex<ServerSettings>>,
 }
 
 impl ClientHandler {
@@ -26,14 +30,13 @@ impl ClientHandler {
     ///
     /// * `socket` - The client's TCP socket.
     /// * `messages` - A thread-safe, shared vector of styled messages.
+    /// * `settings` - Thread-safe, shared server settings.
     ///
     /// # Returns
     ///
     /// A new `ClientHandler`.
     ///
-    pub fn new(socket: TcpStream,
-               messages: Arc<Mutex<Vec<StyledMessage>>>,
-        ) -> Self {
+    pub fn new(socket: TcpStream, messages: Arc<Mutex<Vec<StyledMessage>>>, settings: Arc<Mutex<ServerSettings>>) -> Self {
         let buf_writer = BufWriter::new(socket.try_clone().unwrap());
         let buf_reader = BufReader::new(socket.try_clone().unwrap());
         ClientHandler {
@@ -42,6 +45,7 @@ impl ClientHandler {
             buf_reader,
             previous_time: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
             messages,
+            settings,
         }
     }
 
@@ -77,12 +81,12 @@ impl ClientHandler {
         let now = SystemTime::now();
         let current_time = now.duration_since(UNIX_EPOCH).unwrap().as_secs();
         if current_time - self.previous_time > AppDefines::CONNECTION_TIMEOUT_DELAY as u64 {
-            /*add_message(
+            add_message(
                 &self.messages,
                 format!("[WARNING] Connection timeout: {}", self.socket.peer_addr().unwrap()),
                 MessageType::Warning,
-            );*/
-            println!("[WARNING] Connection timeout: {}", self.socket.peer_addr().unwrap());
+            );
+            /*println!("[WARNING] Connection timeout: {}", self.socket.peer_addr().unwrap());*/
             self.socket.shutdown(std::net::Shutdown::Both).unwrap();
             true
         } else {
@@ -99,7 +103,7 @@ impl ClientHandler {
     fn handle_received_message(&mut self, received_message: &str) {
         let all_messages: Vec<&str> = received_message.trim().split(AppDefines::COMMAND_SEP).collect();
         for message in all_messages {
-            println!("[INFO] Message : {:?}", message);
+            /*println!("[INFO] Message : {:?}", message);*/
             match message {
                 AppDefines::QUIT => {
                     self.handle_disconnection();
@@ -265,31 +269,12 @@ impl ClientHandler {
     }
 
     fn handle_disconnection(&mut self) {
-        let peer_addr = match self.socket.peer_addr() {
-            Ok(addr) => addr,
-            Err(_) => {
-                println!("[WARN] Could not get peer address during disconnection.");
-                /*add_message(
-                  &self.messages,
-                  "[WARN] Could not get peer address during disconnection.".to_string(),
-                  MessageType::Warning,
-                );*/
-                return;
-            }
-        };
-
-        println!("[INFO] Client disconnected: {:?}", Result::unwrap(self.socket.peer_addr()));
+        add_message(
+            &self.messages,
+            format!("[INFO] Client disconnected: {:?}", Result::unwrap(self.socket.peer_addr())),
+            MessageType::Info,
+        );
         self.socket.shutdown(Shutdown::Both).expect("Failed to shutdown socket");
-
-        // Shutdown la socket, mais on ignore les erreurs bénignes
-        if let Err(e) = self.socket.shutdown(Shutdown::Both) {
-            println!("[WARN] Failed to shutdown socket for {}: {:?}", peer_addr, e);
-            /*add_message(
-                &self.messages,
-                format!("[WARN] Failed to shutdown socket for {}: {:?}", peer_addr, e),
-                MessageType::Warning,
-            );*/
-        }
     }
 
     /// Adds a message to the response string.

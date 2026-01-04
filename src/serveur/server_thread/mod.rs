@@ -1,8 +1,7 @@
-use std::net::{TcpListener};
 use std::sync::{Arc, Mutex};
+use std::net::TcpListener;
 use std::thread;
 use std::time::Duration;
-
 use crate::app_defines::AppDefines;
 use crate::serveur::client_handler::ClientHandler;
 use crate::types::{add_message, MessageType, StyledMessage};
@@ -63,6 +62,8 @@ pub(crate) struct ServerThread {
     pub(crate) port: u16,
     /// A thread-safe, shared vector of styled messages.
     pub(crate) messages: Arc<Mutex<Vec<StyledMessage>>>,
+    /// Thread-safe, shared server settings.
+    pub(crate) settings: Arc<Mutex<ServerSettings>>,
 }
 
 impl ServerThread {
@@ -79,11 +80,12 @@ impl ServerThread {
     ///
     /// A new `ServerThread` instance.
     ///
-    pub fn new(address: String, port: u16, messages: Arc<Mutex<Vec<StyledMessage>>>) -> Self {
+    pub fn new(address: String, port: u16, messages: Arc<Mutex<Vec<StyledMessage>>>, settings: Arc<Mutex<ServerSettings>>) -> Self {
         ServerThread {
             address,
             port,
             messages,
+            settings,
         }
     }
 
@@ -91,10 +93,7 @@ impl ServerThread {
     pub(crate) fn start(&self) {
         let listener = TcpListener::bind((self.address.to_string(), self.port)).expect("Could not bind to port");
 
-        println!("\n[START] Server address: {:?}", listener.local_addr().unwrap());
-        println!("[START] Listening on port: {}", self.port);
-
-        /*add_message(
+        add_message(
             &self.messages,
             format!("\n[START] Server address: {:?}", listener.local_addr().unwrap()),
             MessageType::Default,
@@ -103,29 +102,29 @@ impl ServerThread {
             &self.messages,
             format!("[START] Listening on port: {}", self.port),
             MessageType::Default,
-        );*/
+        );
 
         for stream in listener.incoming() {
             match stream {
                 Ok(stream) => {
-                    let peer_addr = stream.peer_addr().unwrap();
-
-                    println!("[INFO] New client connected: {}", peer_addr);
-                    /*add_message(
+                    add_message(
                         &self.messages,
-                        format!("[INFO] New client connected: {}", peer_addr),
+                        format!("[INFO] New client connected: {}", stream.peer_addr().unwrap()),
                         MessageType::Info,
-                    );*/
-
+                    );
                     let messages = Arc::clone(&self.messages);
+                    let settings = Arc::clone(&self.settings);
                     stream.set_read_timeout(Some(Duration::from_millis(100))).unwrap(); // Set timeout
-
                     thread::spawn(move || {
-                        ClientHandler::new(stream, messages).run();
+                        ClientHandler::new(stream, messages, settings).run();
                     });
                 }
                 Err(e) => {
-                    println!("[ERROR] Connection failed: {}", e);
+                    add_message(
+                        &self.messages,
+                        format!("[ERROR] Connection failed: {}", e),
+                        MessageType::Error,
+                    );
                 }
             }
         }
