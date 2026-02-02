@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Android controller</string>
+    <string name="connect_action">Connect</string>
+    <string name="join_server_title">Join server</string>
+    <string name="select_ip_address_label">Input server IP address :</string>
+    <string name="error_name">Error : Name cannot contain specials characters such as ,;"'#=</string>
+    <string name="error_ip">Error : IP address cannot contain specials characters except point (.)</string>
+    <string name="error_connexion">Error : Connection has failed</string>
+    <string name="select_name_label">Add your name :</string>
+    <string name="select_color_label">Color :</string>
+    <string name="select_bgm_label">BGM :</string>
+    <string name="no_selection_label">None</string>
+    <string name="choose_label">Choose</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="exit_action">Exit</string>
+    <string name="shoot_action">Shoot</string>
+    <string name="player_label">Player : </string>
+    <string name="auto_label">Auto</string>
+    <string name="angle_offset_label">Angle Offset : </string>
+    <string name="taunt_action">Taunt</string>
+    <string name="player_display_label">Player display : </string>
+    <string name="defense_shoot_action">Defense (360°)</string>
+    <string name="spread_shoot_action">Spread</string>
+    <string name="normal_shoot_action">Normal</string>
+    <string name="front_scan_shoot_action">Front Scan</string>
+    <string name="back_scan_shoot_action">Back Scan</string>
+    <string name="color_player_display">Color</string>
+    <string name="rainbow_player_display">Rainbow</string>
+    <string name="hide_player_display">Hide</string>
+    <string name="other_selection_label">Other</string>
+    <string-array name="shootModes">
+        <item>Defense (360°)</item>
+        <item>Spread</item>
+        <item>Normal</item>
+        <item>Front Scan</item>
+        <item>Back Scan</item>
+    </string-array>
+</resources>

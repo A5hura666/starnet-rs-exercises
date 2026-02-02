@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="connect_action">Connexion</string>
+    <string name="join_server_title">Rejoindre le serveur</string>
+    <string name="select_ip_address_label">Ajoutez l\'adresse IP du serveur :</string>
+    <string name="error_name">Erreur : le nom ne peut pas contenir les caractères ,;"'#=</string>
+    <string name="error_ip">Erreur : l\'adresse IP ne peut pas contenir de caractères spéciaux sauf le point (.)</string>
+    <string name="error_connexion">Erreur : pas de connexion</string>
+    <string name="select_name_label">Ajoutez votre nom :</string>
+    <string name="select_color_label">Couleur :</string>
+    <string name="select_bgm_label">BGM :</string>
+    <string name="no_selection_label">Aucun</string>
+    <string name="choose_label">Choisir</string>
+    <string name="cancel_label">Annuler</string>
+    <string name="exit_action">Sortir</string>
+    <string name="shoot_action">Tirer</string>
+    <string name="player_label">Joueur : </string>
+    <string name="auto_label">Auto</string>
+    <string name="angle_offset_label">Décalage de la traverse : </string>
+    <string name="taunt_action">Provoque</string>
+    <string name="player_display_label">Affichage joueur : </string>
+    <string name="normal_shoot_action">Normal</string>
+    <string name="defense_shoot_action">Défense (360°)</string>
+    <string name="spread_shoot_action">Propagé</string>
+    <string name="front_scan_shoot_action">Balayage avant</string>
+    <string name="back_scan_shoot_action">Balayage arrière</string>
+    <string name="color_player_display">Couleur</string>
+    <string name="rainbow_player_display">Arc-en-ciel</string>
+    <string name="hide_player_display">Caché</string>
+    <string name="other_selection_label">Autre</string>
+    <string-array name="shootModes">
+        <item>Défense (360°)</item>
+        <item>Propagé</item>
+        <item>Normal</item>
+        <item>Balayage avant</item>
+        <item>Balayage arrière</item>
+    </string-array>
+</resources>

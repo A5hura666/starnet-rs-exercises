@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="gfg_heading" type="id" />
+    <item name="pick_color_button" type="id" />
+    <item name="preview_selected_color" type="id" />
+    <item name="set_color_button" type="id" />
+</resources>
