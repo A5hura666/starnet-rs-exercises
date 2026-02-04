@@ -80,55 +80,14 @@ impl ServerThread {
     /// A new `ServerThread` instance.
     ///
     pub fn new(address: String, port: u16, messages: Arc<Mutex<Vec<StyledMessage>>>) -> Self {
-        ServerThread {
-            address,
-            port,
-            messages,
-        }
+        // TODO : ServerThread
     }
 
     /// Starts the server thread, listening for incoming connections and spawning a new client handler for each connection.
     pub(crate) fn start(&self) {
-        let listener = TcpListener::bind((self.address.to_string(), self.port)).expect("Could not bind to port");
-
-        println!("\n[START] Server address: {:?}", listener.local_addr().unwrap());
-        println!("[START] Listening on port: {}", self.port);
-
-        /*add_message(
-            &self.messages,
-            format!("\n[START] Server address: {:?}", listener.local_addr().unwrap()),
-            MessageType::Default,
-        );
-        add_message(
-            &self.messages,
-            format!("[START] Listening on port: {}", self.port),
-            MessageType::Default,
-        );*/
-
-        for stream in listener.incoming() {
-            match stream {
-                Ok(stream) => {
-                    let peer_addr = stream.peer_addr().unwrap();
-
-                    println!("[INFO] New client connected: {}", peer_addr);
-                    /*add_message(
-                        &self.messages,
-                        format!("[INFO] New client connected: {}", peer_addr),
-                        MessageType::Info,
-                    );*/
-
-                    let messages = Arc::clone(&self.messages);
-                    stream.set_read_timeout(Some(Duration::from_millis(100))).unwrap(); // Set timeout
-
-                    thread::spawn(move || {
-                        ClientHandler::new(stream, messages).run();
-                    });
-                }
-                Err(e) => {
-                    println!("[ERROR] Connection failed: {}", e);
-                }
-            }
-        }
+        // TODO : Start the server thread
+        
+        // TODO : Accept incoming connections
     }
 }
 
